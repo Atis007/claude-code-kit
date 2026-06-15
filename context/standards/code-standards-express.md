@@ -3,6 +3,24 @@
 Express.js + TypeScript backend conventions. Use with
 `code-standards-typescript.md`.
 
+## Version
+
+Target Express 5+ and Node.js 22+ (LTS). Key changes from Express 4:
+
+- `app.listen()` returns a `Promise` — can be awaited
+- Path route matching uses updated syntax (no regex by default)
+- Rejected promises in handlers automatically call `next(err)` —
+  no need for manual try-catch wrappers or `express-async-errors`
+- `req.query` returns a plain object (no prototype pollution risk)
+- Removed deprecated methods (`req.host`, `req.acceptsCharset`)
+
+Node.js 22+ features to use:
+- Built-in `fetch` (stable, no node-fetch needed)
+- `node:test` runner for simple tests
+- `--env-file` flag for loading `.env` without dotenv
+- `import.meta.dirname` and `import.meta.filename` (ESM)
+- Stable WebSocket client (`WebSocket` global)
+
 ## Architecture Pattern
 
 - **Routes** define endpoints and wire middleware. No logic.
@@ -17,7 +35,8 @@ Express.js + TypeScript backend conventions. Use with
 ## Request/Response
 
 - Validate input at controller or middleware level with a
-  schema validator (Zod, Joi) — define in `architecture.md`
+  schema validator (Zod preferred for TS inference) — define
+  in `architecture.md`
 - Consistent JSON response shapes:
   ```ts
   // Success
@@ -38,6 +57,14 @@ Express.js + TypeScript backend conventions. Use with
 - Order: CORS → body parser → auth → route validation →
   handler → error handler
 - No business logic in middleware
+- Express 5 handles async errors automatically — no wrapper needed:
+  ```ts
+  // Express 5 — this just works, rejected promises go to error handler
+  router.get('/:id', async (req, res) => {
+    const user = await userService.getById(req.params.id);
+    res.json({ data: user });
+  });
+  ```
 
 ## Error Handling
 
@@ -57,7 +84,7 @@ Express.js + TypeScript backend conventions. Use with
 
 ## Database
 
-- DB client choice in `architecture.md` (Prisma, Knex, raw pg)
+- DB client choice in `architecture.md` (Prisma, Drizzle, Knex, raw pg)
 - Typed query results — no `any` from DB
 - Parameterized queries — no string concatenation
 - Transactions for multi-statement writes
@@ -87,8 +114,17 @@ Express.js + TypeScript backend conventions. Use with
 
 ## Environment and Config
 
-- All config from environment variables — not hardcoded
-- Parse and validate env vars at startup — fail fast if missing
+- Use `--env-file .env` flag (Node 22+) or dotenv — pick one
+- Parse and validate env vars at startup with Zod — fail fast
+  if missing:
+  ```ts
+  const envSchema = z.object({
+    PORT: z.coerce.number().default(3000),
+    DATABASE_URL: z.string().url(),
+    JWT_SECRET: z.string().min(32),
+  });
+  export const env = envSchema.parse(process.env);
+  ```
 - No `.env` in git — use `.env.example`
 
 ## Security

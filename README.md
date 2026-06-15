@@ -1,168 +1,223 @@
 # claude-code-kit
 
-Modular configuration files for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Two operational modes, stack-specific standards, and project scaffolding templates.
+Modular configuration files for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Global CLAUDE.md defaults to advisor mode. Drop a `context/` folder into any project to activate build mode. Stack-specific standards and project scaffolding templates.
 
-Ships with React, React Native, PHP, Express, Go, Java, C, and C#. Designed to grow — add any stack by dropping in two files.
+Ships with C, C#, Express, Go, Java, PHP, Python, React, React Native and Rust. Designed to grow — add any stack by dropping in two files.
 
 Works alongside the [Karpathy behavioral guidelines](https://github.com/multica-ai/andrej-karpathy-skills) plugin.
 
-## What This Is
+## How It Works
 
-A kit of files you assemble per project to control how Claude Code works with your codebase. Not a plugin — a scaffolding system you copy from and customize.
+A single `CLAUDE.md` at `~/.claude/CLAUDE.md` applies globally to every project:
 
-**Mode 1 — Advisor:** You write code. Claude reads it, answers questions, doesn't touch files.
+- **No `context/` directory in the project** → **Advisor Mode**: Claude reads code and answers questions. No file modifications unless explicitly asked.
+- **`context/` directory exists in the project** → **Build Mode**: Claude reads `build-rules.md` and all spec files, then implements against them. You lead, Claude builds.
 
-**Mode 2 — Agentic Build:** You lead. Claude implements against spec files that define the project, architecture, and coding standards.
+No per-project CLAUDE.md files. No switching. The presence of `context/` is the switch.
 
-## Structure
+## One-Time Setup
+
+1. Place `CLAUDE.md` at `~/.claude/CLAUDE.md`
+2. Install the [Karpathy guidelines](https://github.com/multica-ai/andrej-karpathy-skills) plugin (recommended)
+
+That's it. Every project now runs in advisor mode by default.
+
+## Repo Structure
 
 ```
-├── advisor-CLAUDE.md              ← Mode 1: drop in as CLAUDE.md
-├── build-CLAUDE.md                ← Mode 2: drop in as CLAUDE.md
-├── templates/                     ← Universal, fill per project
-│   ├── project-overview.md
-│   ├── progress-tracker.md
-│   ├── ai-workflow-rules.md
-│   └── ui-context.md
-├── standards/                     ← Stack-specific, reusable as-is
-│   ├── code-standards-typescript.md
-│   ├── code-standards-react.md
-│   ├── code-standards-rn.md
-│   ├── code-standards-php.md
-│   ├── code-standards-express.md
-│   ├── code-standards-go.md
-│   ├── code-standards-java.md
-│   ├── code-standards-c.md
-│   └── code-standards-csharp.md
-└── architecture/                  ← Stack starters, pick + customize
-    ├── architecture-react.md
-    ├── architecture-rn.md
-    ├── architecture-php.md
-    ├── architecture-express.md
-    ├── architecture-go.md
-    ├── architecture-java.md
-    ├── architecture-c.md
-    └── architecture-csharp.md
+├── CLAUDE.md                              ← Goes to ~/.claude/CLAUDE.md (once)
+└── context/
+    ├── build-rules.md                     ← Build mode instructions
+    ├── templates/                         ← Universal, fill per project
+    │   ├── project-overview.md
+    │   ├── progress-tracker.md
+    │   ├── ai-workflow-rules.md
+    │   └── ui-context.md
+    ├── standards/                         ← Stack-specific, reusable as-is
+    │   ├── code-standards-typescript.md
+    │   ├── code-standards-react.md
+    │   ├── code-standards-rn.md
+    │   ├── code-standards-php.md
+    │   ├── code-standards-express.md
+    │   ├── code-standards-go.md
+    │   ├── code-standards-java.md
+    │   ├── code-standards-c.md
+    │   ├── code-standards-csharp.md
+    │   ├── code-standards-python.md
+    │   └── code-standards-rust.md
+    └── architecture/                      ← Stack starters, pick + customize
+        ├── architecture-react.md
+        ├── architecture-rn.md
+        ├── architecture-php.md
+        ├── architecture-express.md
+        ├── architecture-go.md
+        ├── architecture-java.md
+        ├── architecture-c.md
+        ├── architecture-csharp.md
+        ├── architecture-python.md
+        └── architecture-rust.md
 ```
 
 **Templates** are language-agnostic — same files for every project, filled in with your specifics.
 
 **Standards and architecture** are stack-specific — pick the ones matching your project, or create new ones for any stack.
 
-## Usage
+## Activating Build Mode for a Project
 
-### Mode 1 — Advisor
+1. Create a `context/` folder in your project root
+2. Copy `build-rules.md` into `context/`
+3. Copy the templates you need from `templates/` into `context/` — **flat, as siblings to `build-rules.md`**, not inside a subfolder
+4. Pick your architecture starter from `architecture/`, copy into `context/` and rename to `architecture.md`
+5. Pick your code standards from `standards/`, copy into `context/`
+6. Fill in the template placeholders
 
-Copy `advisor-CLAUDE.md` to your project root as `CLAUDE.md`. Done.
+**Important:** In your project, all files must be flat inside `context/`. The subdirectories (`templates/`, `standards/`, `architecture/`) only exist in this repo for organization. Your project should look like this:
 
-### Mode 2 — Agentic Build
+```
+my-project/
+├── context/
+│   ├── build-rules.md
+│   ├── project-overview.md
+│   ├── architecture.md              ← renamed from architecture-{stack}.md
+│   ├── ui-context.md
+│   ├── code-standards-typescript.md
+│   ├── code-standards-rn.md
+│   ├── ai-workflow-rules.md
+│   └── progress-tracker.md
+├── src/
+└── ...
+```
 
-1. Copy `build-CLAUDE.md` to your project root as `CLAUDE.md`
-2. Create a `context/` folder in your project
-3. Copy templates from `templates/` into `context/`
-4. Pick your architecture starter, copy to `context/architecture.md`
-5. Pick your code standards, copy to `context/`
-6. Edit file references in `CLAUDE.md` to match your stack
-7. Fill in the template placeholders
+## Example Stack Combos
 
-### Example Stack Combos
+Files to copy flat into your project's `context/` (alongside `build-rules.md`):
 
 **React + Tailwind (web frontend)**
+
 ```
-context/
-├── project-overview.md
-├── architecture.md              ← from architecture-react.md
-├── ui-context.md
-├── code-standards-typescript.md
-├── code-standards-react.md
-├── ai-workflow-rules.md
-└── progress-tracker.md
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-react.md
+ui-context.md
+code-standards-typescript.md
+code-standards-react.md
+ai-workflow-rules.md
+progress-tracker.md
 ```
 
 **React Native + Expo (mobile)**
+
 ```
-context/
-├── project-overview.md
-├── architecture.md              ← from architecture-rn.md
-├── ui-context.md
-├── code-standards-typescript.md
-├── code-standards-rn.md
-├── ai-workflow-rules.md
-└── progress-tracker.md
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-rn.md
+ui-context.md
+code-standards-typescript.md
+code-standards-rn.md
+ai-workflow-rules.md
+progress-tracker.md
 ```
 
 **PHP REST API (backend, no framework)**
+
 ```
-context/
-├── project-overview.md
-├── architecture.md              ← from architecture-php.md
-├── code-standards-php.md
-├── ai-workflow-rules.md
-└── progress-tracker.md
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-php.md
+code-standards-php.md
+ai-workflow-rules.md
+progress-tracker.md
 ```
 
 **Express.js + TypeScript (backend)**
+
 ```
-context/
-├── project-overview.md
-├── architecture.md              ← from architecture-express.md
-├── code-standards-typescript.md
-├── code-standards-express.md
-├── ai-workflow-rules.md
-└── progress-tracker.md
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-express.md
+code-standards-typescript.md
+code-standards-express.md
+ai-workflow-rules.md
+progress-tracker.md
 ```
 
 **Go (backend / systems)**
+
 ```
-context/
-├── project-overview.md
-├── architecture.md              ← from architecture-go.md
-├── code-standards-go.md
-├── ai-workflow-rules.md
-└── progress-tracker.md
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-go.md
+code-standards-go.md
+ai-workflow-rules.md
+progress-tracker.md
 ```
 
 **Java (backend)**
+
 ```
-context/
-├── project-overview.md
-├── architecture.md              ← from architecture-java.md
-├── code-standards-java.md
-├── ai-workflow-rules.md
-└── progress-tracker.md
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-java.md
+code-standards-java.md
+ai-workflow-rules.md
+progress-tracker.md
 ```
 
 **C (systems)**
+
 ```
-context/
-├── project-overview.md
-├── architecture.md              ← from architecture-c.md
-├── code-standards-c.md
-├── ai-workflow-rules.md
-└── progress-tracker.md
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-c.md
+code-standards-c.md
+ai-workflow-rules.md
+progress-tracker.md
 ```
 
 **C# / .NET (backend)**
+
 ```
-context/
-├── project-overview.md
-├── architecture.md              ← from architecture-csharp.md
-├── code-standards-csharp.md
-├── ai-workflow-rules.md
-└── progress-tracker.md
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-csharp.md
+code-standards-csharp.md
+ai-workflow-rules.md
+progress-tracker.md
 ```
 
-**Full-stack:** Combine frontend and backend files. Use one `architecture.md` covering both layers, or split into two and reference both in `CLAUDE.md`.
+**Python (backend / scripting)**
+
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-python.md
+code-standards-python.md
+ai-workflow-rules.md
+progress-tracker.md
+```
+
+**Rust (backend / systems)**
+
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-rust.md
+code-standards-rust.md
+ai-workflow-rules.md
+progress-tracker.md
+```
+
+**Full-stack:** Combine frontend and backend files. Use one `architecture.md` covering both layers, or split into `architecture-frontend.md` and `architecture-backend.md`.
 
 ## Adding a New Stack
 
-The kit grows with you. To add Python, Rust, Swift, or anything else:
+The kit grows with you. To add Swift, Kotlin, Zig, or anything else:
 
-1. Create `standards/code-standards-{stack}.md` — your coding conventions for that stack
-2. Create `architecture/architecture-{stack}.md` — typical system structure and boundaries
+1. Create `context/standards/code-standards-{stack}.md` — your coding conventions for that stack
+2. Create `context/architecture/architecture-{stack}.md` — typical system structure and boundaries
 3. Add the combo to this README
 
-That's it. The templates, workflow rules, and CLAUDE.md files work with any stack unchanged.
+That's it. The templates, workflow rules, and CLAUDE.md work with any stack unchanged.
 
 ## Prerequisites
 

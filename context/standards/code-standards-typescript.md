@@ -3,11 +3,17 @@
 Shared TypeScript conventions. Used alongside a stack-specific
 standards file (React, RN, Express).
 
+## Version
+
+Target TypeScript 5.5+. Use current features.
+
 ## Strict Mode
 
 - `strict: true` in tsconfig — no exceptions
 - No `// @ts-ignore` or `// @ts-expect-error` without a
   comment explaining why and a TODO to remove it
+- Enable `verbatimModuleSyntax` — forces explicit `import type`
+  for type-only imports
 
 ## Types
 
@@ -23,6 +29,38 @@ standards file (React, RN, Express).
   ```
 - Export types from the file that defines them — do not
   re-declare the same shape in multiple files
+- Use `satisfies` to validate a value matches a type while
+  keeping the narrower inferred type:
+  ```ts
+  const config = {
+    port: 3000,
+    host: 'localhost',
+  } satisfies ServerConfig;
+  // config.port is number, not number | string
+  ```
+- Use `const` type parameters when you need literal inference:
+  ```ts
+  function createRoute<const T extends string>(path: T): Route<T> { ... }
+  // createRoute('/users') → Route<'/users'>, not Route<string>
+  ```
+- Use `using` and `await using` for resource cleanup (explicit
+  resource management):
+  ```ts
+  await using db = await connectDB();
+  // db is disposed when scope exits
+  ```
+
+## Inferred Type Predicates (TS 5.5+)
+
+TypeScript can now infer type predicates from function bodies.
+Simple filter patterns work without explicit annotations:
+```ts
+// TS 5.5+ infers this correctly
+const defined = items.filter(x => x !== undefined);
+// defined is T[] not (T | undefined)[]
+```
+
+Still use explicit predicates for complex narrowing logic.
 
 ## Boundaries
 
@@ -32,6 +70,8 @@ standards file (React, RN, Express).
   in the call stack
 - Parse, don't validate: transform unknown data into typed
   data at the boundary, then pass typed data forward
+- Use Zod, Valibot, or ArkType at boundaries for runtime
+  validation with inferred types
 
 ## Naming
 
@@ -54,29 +94,35 @@ standards file (React, RN, Express).
   longer than 5 lines
 - Early returns over nested conditionals:
   ```ts
-  // yes
   if (!user) return null;
   if (!user.active) return null;
   return user.name;
-
-  // no
-  if (user) {
-    if (user.active) {
-      return user.name;
-    }
-  }
-  return null;
   ```
 
 ## Imports
 
+- Use `import type` for type-only imports (enforced by
+  `verbatimModuleSyntax`)
 - Group in this order, separated by blank lines:
   1. External packages
   2. Internal modules (absolute paths / aliases)
   3. Relative imports (parent, then sibling, then child)
-  4. Types (if using `import type`)
+  4. Type imports
 - No circular imports — if two files import each other,
   extract the shared dependency
+
+## Enums and Constants
+
+- Prefer `as const` objects over `enum` for most cases:
+  ```ts
+  const Status = {
+    Active: 'active',
+    Inactive: 'inactive',
+  } as const;
+  type Status = typeof Status[keyof typeof Status];
+  ```
+- Use `enum` only when you need reverse mapping (numeric enums)
+  or the type and value must share a name across files
 
 ## Error Handling
 

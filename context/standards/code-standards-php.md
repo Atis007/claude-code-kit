@@ -3,11 +3,46 @@
 PHP 8.4+ REST API conventions. No framework — custom routing,
 controllers, and services.
 
+## Version
+
+Target PHP 8.4+. Use current language features:
+
+- **Property hooks** (8.4) — custom get/set logic without
+  boilerplate getters/setters:
+  ```php
+  class User {
+      public string $name {
+          set => trim($value);
+      }
+      public string $displayName {
+          get => "{$this->name} ({$this->role->value})";
+      }
+  }
+  ```
+- **Asymmetric visibility** (8.4) — different access for
+  read vs write:
+  ```php
+  class Transaction {
+      public private(set) readonly string $id;
+      public private(set) float $amount;
+  }
+  ```
+- **`new` without parentheses** (8.4) — `new UserDto` instead
+  of `new UserDto()`
+- **`array_find()`**, **`array_any()`**, **`array_all()`** (8.4) —
+  use instead of manual loops for searching/checking arrays
+- **`#[\Override]`** (8.3) — mark methods that override a parent
+- **`#[\Deprecated]`** (8.4) — mark deprecated code with messages
+- **Enums** (8.1) — for all fixed value sets
+- **Readonly classes** (8.2) — for immutable DTOs
+- **Typed class constants** (8.3)
+- **Match expressions** — instead of switch for value returns
+- **Named arguments** — for clarity in calls with many parameters
+- **Fibers** — only when async is genuinely needed
+
 ## General
 
 - `declare(strict_types=1)` in every file
-- Use PHP 8.x features: typed properties, union types, named
-  arguments, enums, match, readonly properties
 - PSR-12 coding style
 - PSR-4 autoloading via Composer
 
@@ -35,6 +70,33 @@ controllers, and services.
   ```
 - Appropriate HTTP status codes — don't return 200 for errors
 - `Content-Type: application/json` on all API responses
+
+## DTOs and Value Objects
+
+Use readonly classes with asymmetric visibility for DTOs:
+```php
+readonly class CreateUserDto {
+    public function __construct(
+        public string $name,
+        public string $email,
+        public Role $role = Role::User,
+    ) {}
+}
+```
+
+Use property hooks for computed or validated properties:
+```php
+class Money {
+    public int $cents {
+        get => (int)($this->amount * 100);
+    }
+
+    public function __construct(
+        public private(set) float $amount,
+        public private(set) string $currency,
+    ) {}
+}
+```
 
 ## Routing
 
@@ -66,12 +128,31 @@ controllers, and services.
 - Global exception handler → HTTP response conversion
 - Never expose stack traces or SQL to the client
 
+## Enums
+
+Use backed enums for all fixed value sets:
+```php
+enum Role: string {
+    case Admin = 'admin';
+    case User = 'user';
+    case Moderator = 'moderator';
+
+    public function canDelete(): bool {
+        return match($this) {
+            self::Admin, self::Moderator => true,
+            default => false,
+        };
+    }
+}
+```
+
 ## Types and Structure
 
 - Type hints on all parameters and return types
-- Enums for fixed value sets (roles, statuses)
-- Readonly classes or DTOs for data transfer between layers
+- Union types and intersection types where appropriate
+- `readonly` on properties that shouldn't change after construction
 - No magic arrays passed between layers — define the shape
+  with classes or readonly classes
 
 ## Naming
 
@@ -85,7 +166,9 @@ controllers, and services.
 
 - `src/Controllers/` — HTTP controllers
 - `src/Services/` — business logic
-- `src/Models/` or `src/Repositories/` — database access
+- `src/Repositories/` — database access
+- `src/Dto/` — data transfer objects
+- `src/Enum/` — backed enums
 - `src/Middleware/` — request middleware (auth, CORS)
 - `src/Exceptions/` — custom exception classes
 - `src/Routes/` — route definitions
@@ -99,5 +182,6 @@ controllers, and services.
 - CORS: explicit allowed origins, not `*` in production
 - Rate limiting on auth endpoints
 - Input sanitization for rendered data
-- `password_hash()` with `PASSWORD_BCRYPT` or `PASSWORD_ARGON2ID`
+- `password_hash()` with `PASSWORD_ARGON2ID` (preferred) or
+  `PASSWORD_BCRYPT`
 - Secrets in environment variables, not in code

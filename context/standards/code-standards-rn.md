@@ -2,6 +2,18 @@
 
 React Native + Expo conventions. Use with `code-standards-typescript.md`.
 
+## Version
+
+Target Expo SDK 52+ and React Native 0.76+ (New Architecture
+enabled by default). Use current features:
+
+- New Architecture (Fabric renderer, TurboModules) — enabled
+  by default in SDK 52+, no opt-in needed
+- `expo-router` v4+ for file-based routing (if used)
+- `expo-image` over `Image` for better caching and performance
+- `expo-sqlite` with synchronous API (SDK 52+)
+- React 19 features available in latest Expo
+
 ## Components
 
 - Functional components only
@@ -9,6 +21,7 @@ React Native + Expo conventions. Use with `code-standards-typescript.md`.
 - Props interface named `{Component}Props`
 - Co-locate component-specific types, helpers, and constants —
   extract only when shared
+- `ref` as a normal prop (React 19) — no `forwardRef`
 
 ## Component Structure
 
@@ -37,15 +50,22 @@ Order within a component:
 - All database access through a dedicated data layer —
   components never run SQL directly
 - Typed query results — define interfaces for each table row
+- Use the synchronous API (`useSQLiteContext`) for simpler code
+  in SDK 52+
 - Migrations: versioned, forward-only, run on app start
 - Use transactions for multi-statement writes
-- Async operations: handle loading and error states in the UI
+- `db.getAllSync()` / `db.runSync()` for synchronous operations
+  when appropriate
 
 ## Navigation
 
-- Expo Router for file-based routing or React Navigation —
-  document the choice in `architecture.md`
+- Expo Router v4+ for file-based routing (preferred for new
+  projects) or React Navigation — document in `architecture.md`
 - Type route params — no untyped `params.id` access
+- Use typed routes with Expo Router:
+  ```tsx
+  router.push({ pathname: '/user/[id]', params: { id: userId } });
+  ```
 - Keep screen components thin — delegate logic to hooks or
   services, screen is a layout shell
 
@@ -62,17 +82,33 @@ Order within a component:
 - Project design tokens (in `ui-context.md`) via a theme
   module — no hardcoded hex values
 - Platform-specific styles via `Platform.select` when needed
+- If using NativeWind (Tailwind for RN), follow the Tailwind
+  conventions from `code-standards-react.md` adapted for RN:
+  - `className` prop for styling
+  - Same utility class rules apply
+  - Use NativeWind's `vars()` for CSS variable equivalents
+
+## Images
+
+- Use `expo-image` instead of React Native's `Image`:
+  - Built-in caching and placeholder support
+  - Better performance with Fabric
+  - `contentFit` instead of `resizeMode`
+- Specify dimensions — don't rely on intrinsic image sizing
+- Use appropriate image formats (WebP when possible)
 
 ## Performance
 
 - `FlatList` for any list that can exceed ~20 items — never
   `ScrollView` with `.map()` for dynamic lists
+- `FlashList` from `@shopify/flash-list` as a drop-in
+  replacement for better performance on large lists
 - `keyExtractor` with stable, unique keys — not array index
 - `getItemLayout` when items have fixed height
 - Minimize re-renders in lists: keep item components pure,
   avoid passing new objects/functions as props every render
-- Images: use appropriate resolution, `expo-image` when available
 - Do not memoize by default — memoize when measured
+- Use `useTransition` for non-urgent updates (React 19)
 
 ## Hooks
 
@@ -84,8 +120,8 @@ Order within a component:
 
 ## File Organization
 
-- `app/` — route screens (Expo Router) or `screens/`
-  (React Navigation)
+- `app/` — route screens (Expo Router)
+- `screens/` — screen components (React Navigation)
 - `components/` — shared components
 - `components/ui/` — base UI primitives
 - `features/` — feature-specific components by domain
@@ -94,7 +130,8 @@ Order within a component:
 - `db/` — database schema, migrations, data access layer
 - `lib/` or `utils/` — pure utility functions
 - `types/` — shared type definitions
-- `constants/` — app-wide constants (colors, config, enums)
+- `constants/` — colors, config values, enums
+- `assets/` — images, fonts, static resources
 
 ## Platform Considerations
 
@@ -105,6 +142,7 @@ Order within a component:
   edge-to-edge screens
 - Keyboard: `KeyboardAvoidingView` with platform-specific
   behavior prop
+- Haptics: `expo-haptics` for tactile feedback on interactions
 
 ## Error Handling
 
