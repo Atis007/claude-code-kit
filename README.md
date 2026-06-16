@@ -1,6 +1,8 @@
 # claude-code-kit
 
-Modular configuration files for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Global CLAUDE.md defaults to advisor mode. Drop a `context/` folder into any project to activate build mode. Stack-specific standards and project scaffolding templates.
+Modular configuration files for AI coding agents — [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenAI Codex](https://developers.openai.com/codex/), [Cursor](https://cursor.com/docs/rules), and [OpenCode](https://opencode.ai/docs/rules/). A single behavior file (`CLAUDE.md`) defaults to advisor mode. Drop a `context/` folder into any project to activate build mode. Stack-specific standards and project scaffolding templates.
+
+`CLAUDE.md` is the canonical behavior file — the exact same content drives every tool; only its filename and location differ per tool (see [Using with Codex, Cursor, and OpenCode](#using-with-codex-cursor-and-opencode)).
 
 Ships with C, C#, Express, Go, Java, JavaScript, PHP, Python, React, React Native, Rust, and TypeScript. Designed to grow — add any stack by dropping in two files.
 
@@ -8,24 +10,64 @@ Works alongside the [Karpathy behavioral guidelines](https://github.com/multica-
 
 ## How It Works
 
-A single `CLAUDE.md` at `~/.claude/CLAUDE.md` applies globally to every project:
+A single behavior file installed globally for your tool of choice applies to every project:
 
-- **No `context/` directory in the project** → **Advisor Mode**: Claude reads code and answers questions. No file modifications unless explicitly asked.
-- **`context/` directory exists in the project** → **Build Mode**: Claude reads `build-rules.md` and all spec files, then implements against them. You lead, Claude builds.
+- **No `context/` directory in the project** → **Advisor Mode**: the agent reads code and answers questions. No file modifications unless explicitly asked.
+- **`context/` directory exists in the project** → **Build Mode**: the agent reads `build-rules.md` and all spec files, then implements against them. You lead, the agent builds.
 
-No per-project CLAUDE.md files. No switching. The presence of `context/` is the switch.
+No per-project behavior files. No switching. The presence of `context/` is the switch. This works identically across Claude Code, Codex, Cursor, and OpenCode — only the global file's name/location differs per tool.
 
 ## One-Time Setup
 
-1. Place `CLAUDE.md` at `~/.claude/CLAUDE.md`
-2. Install the [Karpathy guidelines](https://github.com/multica-ai/andrej-karpathy-skills) plugin (recommended)
+1. Install the behavior file at your tool's global path — see
+   [Using with Codex, Cursor, and OpenCode](#using-with-codex-cursor-and-opencode)
+   for the exact name/location. For Claude Code: place `CLAUDE.md` at
+   `~/.claude/CLAUDE.md`.
+2. Install the [Karpathy guidelines](https://github.com/multica-ai/andrej-karpathy-skills) plugin (recommended, Claude Code only)
 
 That's it. Every project now runs in advisor mode by default.
+
+## Using with Codex, Cursor, and OpenCode
+
+`CLAUDE.md` is the single source of truth for agent behavior. The content is
+identical for every tool — you just install it under the name and location that
+tool expects. The `context/` folder and all spec files are copied **unchanged**
+regardless of tool.
+
+| Tool | Where the behavior file goes | How |
+| ---- | ---------------------------- | --- |
+| Claude Code | `~/.claude/CLAUDE.md` | copy as-is |
+| OpenAI Codex | `~/.codex/AGENTS.md` | rename `CLAUDE.md` → `AGENTS.md` |
+| OpenCode | `~/.config/opencode/AGENTS.md` | rename `CLAUDE.md` → `AGENTS.md` |
+| Cursor | project `AGENTS.md`, User Rules, or `.cursor/rules/*.mdc` | see below |
+
+**Codex** and **OpenCode** read `AGENTS.md` as their instructions file (Codex
+does not read `CLAUDE.md` at all, so the rename is required). Both also support a
+project-level `AGENTS.md` if you prefer per-repo behavior over a global file.
+
+**Cursor** has three options, pick one:
+
+- **Project file** — drop the renamed `AGENTS.md` in the project root. Cursor
+  reads it as plain-markdown instructions.
+- **User Rules** — paste the `CLAUDE.md` contents into Settings → Rules → User
+  Rules to apply it globally across all projects (closest to the other tools'
+  global file).
+- **Native project rule** — create `.cursor/rules/code-advisor.mdc` and prepend
+  this YAML frontmatter above the `CLAUDE.md` body:
+  ```
+  ---
+  description: Code advisor / build-mode behavior
+  alwaysApply: true
+  ---
+  ```
+
+The advisor-vs-build-mode switch (presence of `context/`) works the same in
+every case — it is behavior described inside the file, not tool-specific config.
 
 ## Repo Structure
 
 ```
-├── CLAUDE.md                              ← Goes to ~/.claude/CLAUDE.md (once)
+├── CLAUDE.md                              ← Behavior file; install per tool (once) — see "Using with Codex, Cursor, and OpenCode"
 └── context/
     ├── build-rules.md                     ← Build mode instructions
     ├── templates/                         ← Universal, fill per project
@@ -223,8 +265,8 @@ That's it. The templates, workflow rules, and CLAUDE.md work with any stack unch
 
 ## Prerequisites
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed
-- [Karpathy guidelines](https://github.com/multica-ai/andrej-karpathy-skills) plugin installed (recommended, not required)
+- One of [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenAI Codex](https://developers.openai.com/codex/), [Cursor](https://cursor.com/docs/rules), or [OpenCode](https://opencode.ai/docs/rules/) installed
+- [Karpathy guidelines](https://github.com/multica-ai/andrej-karpathy-skills) plugin installed (recommended, Claude Code only)
 
 ## License
 
