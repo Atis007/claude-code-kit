@@ -2,7 +2,7 @@
 
 Modular configuration files for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Global CLAUDE.md defaults to advisor mode. Drop a `context/` folder into any project to activate build mode. Stack-specific standards and project scaffolding templates.
 
-Ships with C, C#, Express, Go, Java, PHP, Python, React, React Native and Rust. Designed to grow — add any stack by dropping in two files.
+Ships with C, C#, Express, Go, Java, JavaScript, PHP, Python, React, React Native, Rust, and TypeScript. Designed to grow — add any stack by dropping in two files.
 
 Works alongside the [Karpathy behavioral guidelines](https://github.com/multica-ai/andrej-karpathy-skills) plugin.
 
@@ -29,32 +29,34 @@ That's it. Every project now runs in advisor mode by default.
 └── context/
     ├── build-rules.md                     ← Build mode instructions
     ├── templates/                         ← Universal, fill per project
-    │   ├── project-overview.md
-    │   ├── progress-tracker.md
     │   ├── ai-workflow-rules.md
+    │   ├── progress-tracker.md
+    │   ├── project-overview.md
     │   └── ui-context.md
     ├── standards/                         ← Stack-specific, reusable as-is
-    │   ├── code-standards-typescript.md
-    │   ├── code-standards-react.md
-    │   ├── code-standards-rn.md
-    │   ├── code-standards-php.md
+    │   ├── code-standards-c.md
+    │   ├── code-standards-csharp.md
     │   ├── code-standards-express.md
     │   ├── code-standards-go.md
     │   ├── code-standards-java.md
-    │   ├── code-standards-c.md
-    │   ├── code-standards-csharp.md
+    │   ├── code-standards-js.md
+    │   ├── code-standards-php.md
     │   ├── code-standards-python.md
-    │   └── code-standards-rust.md
+    │   ├── code-standards-react.md
+    │   ├── code-standards-rn.md
+    │   ├── code-standards-rust.md
+    │   └── code-standards-typescript.md
     └── architecture/                      ← Stack starters, pick + customize
-        ├── architecture-react.md
-        ├── architecture-rn.md
-        ├── architecture-php.md
+        ├── architecture-c.md
+        ├── architecture-csharp.md
         ├── architecture-express.md
         ├── architecture-go.md
         ├── architecture-java.md
-        ├── architecture-c.md
-        ├── architecture-csharp.md
+        ├── architecture-js.md
+        ├── architecture-php.md
         ├── architecture-python.md
+        ├── architecture-react.md
+        ├── architecture-rn.md
         └── architecture-rust.md
 ```
 
@@ -92,8 +94,88 @@ my-project/
 
 Files to copy flat into your project's `context/` (alongside `build-rules.md`):
 
-**React + Tailwind (web frontend)**
+**C (systems)**
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-c.md
+code-standards-c.md
+ai-workflow-rules.md
+progress-tracker.md
+```
 
+**C# / .NET (backend)**
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-csharp.md
+code-standards-csharp.md
+ai-workflow-rules.md
+progress-tracker.md
+```
+
+**Express.js + TypeScript (backend)**
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-express.md
+code-standards-typescript.md
+code-standards-express.md
+ai-workflow-rules.md
+progress-tracker.md
+```
+
+**Go (backend / systems)**
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-go.md
+code-standards-go.md
+ai-workflow-rules.md
+progress-tracker.md
+```
+
+**Java (backend)**
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-java.md
+code-standards-java.md
+ai-workflow-rules.md
+progress-tracker.md
+```
+
+**JavaScript (vanilla / Node.js)**
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-js.md
+code-standards-js.md
+ai-workflow-rules.md
+progress-tracker.md
+```
+
+**PHP REST API (backend, no framework)**
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-php.md
+code-standards-php.md
+ai-workflow-rules.md
+progress-tracker.md
+```
+
+**Python (backend / scripting)**
+```
+build-rules.md
+project-overview.md
+architecture.md              ← from architecture/architecture-python.md
+code-standards-python.md
+ai-workflow-rules.md
+progress-tracker.md
+```
+
+**React + Tailwind (web frontend)**
 ```
 build-rules.md
 project-overview.md
@@ -106,7 +188,6 @@ progress-tracker.md
 ```
 
 **React Native + Expo (mobile)**
-
 ```
 build-rules.md
 project-overview.md
@@ -118,86 +199,7 @@ ai-workflow-rules.md
 progress-tracker.md
 ```
 
-**PHP REST API (backend, no framework)**
-
-```
-build-rules.md
-project-overview.md
-architecture.md              ← from architecture/architecture-php.md
-code-standards-php.md
-ai-workflow-rules.md
-progress-tracker.md
-```
-
-**Express.js + TypeScript (backend)**
-
-```
-build-rules.md
-project-overview.md
-architecture.md              ← from architecture/architecture-express.md
-code-standards-typescript.md
-code-standards-express.md
-ai-workflow-rules.md
-progress-tracker.md
-```
-
-**Go (backend / systems)**
-
-```
-build-rules.md
-project-overview.md
-architecture.md              ← from architecture/architecture-go.md
-code-standards-go.md
-ai-workflow-rules.md
-progress-tracker.md
-```
-
-**Java (backend)**
-
-```
-build-rules.md
-project-overview.md
-architecture.md              ← from architecture/architecture-java.md
-code-standards-java.md
-ai-workflow-rules.md
-progress-tracker.md
-```
-
-**C (systems)**
-
-```
-build-rules.md
-project-overview.md
-architecture.md              ← from architecture/architecture-c.md
-code-standards-c.md
-ai-workflow-rules.md
-progress-tracker.md
-```
-
-**C# / .NET (backend)**
-
-```
-build-rules.md
-project-overview.md
-architecture.md              ← from architecture/architecture-csharp.md
-code-standards-csharp.md
-ai-workflow-rules.md
-progress-tracker.md
-```
-
-**Python (backend / scripting)**
-
-```
-build-rules.md
-project-overview.md
-architecture.md              ← from architecture/architecture-python.md
-code-standards-python.md
-ai-workflow-rules.md
-progress-tracker.md
-```
-
 **Rust (backend / systems)**
-
 ```
 build-rules.md
 project-overview.md
@@ -211,7 +213,7 @@ progress-tracker.md
 
 ## Adding a New Stack
 
-The kit grows with you. To add Swift, Kotlin, Zig, or anything else:
+The kit grows with you. To add Kotlin, Swift, Zig, or anything else:
 
 1. Create `context/standards/code-standards-{stack}.md` — your coding conventions for that stack
 2. Create `context/architecture/architecture-{stack}.md` — typical system structure and boundaries
