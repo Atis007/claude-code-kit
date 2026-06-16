@@ -7,17 +7,18 @@ Express.js + TypeScript backend conventions. Use with
 
 Target Express 5+ and Node.js 22+ (LTS). Key changes from Express 4:
 
-- `app.listen()` returns a `Promise` — can be awaited
-- Path route matching uses updated syntax (no regex by default)
 - Rejected promises in handlers automatically call `next(err)` —
   no need for manual try-catch wrappers or `express-async-errors`
-- `req.query` returns a plain object (no prototype pollution risk)
-- Removed deprecated methods (`req.host`, `req.acceptsCharset`)
+- Path route matching uses updated syntax (path-to-regexp 8 — named
+  wildcards like `/*splat`, no bare regex strings by default)
+- `req.query` is now a getter (not reassignable); brackets-based
+  query parsing is the default
+- Removed deprecated methods (`req.acceptsCharset`, `app.del`, etc.)
 
-Node.js 22+ features to use:
-- Built-in `fetch` (stable, no node-fetch needed)
+Node.js 22+ runtime features to use:
+- Built-in `fetch` (stable since Node 21, no node-fetch needed)
 - `node:test` runner for simple tests
-- `--env-file` flag for loading `.env` without dotenv
+- `--env-file` flag (Node 20.6+) for loading `.env` without dotenv
 - `import.meta.dirname` and `import.meta.filename` (ESM)
 - Stable WebSocket client (`WebSocket` global)
 
@@ -114,7 +115,7 @@ Node.js 22+ features to use:
 
 ## Environment and Config
 
-- Use `--env-file .env` flag (Node 22+) or dotenv — pick one
+- Use `--env-file .env` flag (Node 20.6+) or dotenv — pick one
 - Parse and validate env vars at startup with Zod — fail fast
   if missing:
   ```ts

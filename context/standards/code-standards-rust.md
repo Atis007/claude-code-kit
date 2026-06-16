@@ -22,7 +22,8 @@ Target Rust 2024 edition (1.85+). Use current stable features:
   };
   ```
 - **C-string literals** (1.77+) — `c"hello"` for FFI
-- **`LazyLock` and `OnceLock`** (1.80+) — lazy statics in stdlib:
+- **`OnceLock` / `OnceCell`** (1.70+) and **`LazyLock` / `LazyCell`**
+  (1.80+) — one-time-init and lazy statics in stdlib:
   ```rust
   static CONFIG: LazyLock<Config> = LazyLock::new(|| {
       Config::from_env().expect("valid config")

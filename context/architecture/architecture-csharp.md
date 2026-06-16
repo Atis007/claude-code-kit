@@ -4,7 +4,7 @@
 
 | Layer       | Technology                        | Role                   |
 | ----------- | --------------------------------- | ---------------------- |
-| Language    | C# 12 / .NET 8+                  | Backend language       |
+| Language    | C# 14 / .NET 10+ (LTS)           | Backend language       |
 | Framework   | [ASP.NET Core / console / worker] | Application type       |
 | Database    | [PostgreSQL / SQL Server / SQLite] | Persistent storage    |
 | ORM         | [EF Core / Dapper]               | Data access            |

@@ -4,7 +4,7 @@
 
 | Layer      | Technology                         | Role                   |
 | ---------- | ---------------------------------- | ---------------------- |
-| Language   | Java 17+ (LTS)                     | Backend language       |
+| Language   | Java 21+ (LTS)                     | Backend language       |
 | Framework  | [Spring Boot / Quarkus / plain]    | Application framework  |
 | Build      | [Maven / Gradle]                   | Build and dependency   |
 | Database   | [PostgreSQL / MySQL]               | Persistent storage     |

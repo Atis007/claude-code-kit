@@ -75,8 +75,9 @@ Order within a component:
 
 ## Performance
 
-- Do not memoize by default — React 19's compiler optimizations
-  reduce the need for manual memoization
+- Do not memoize by default — the React Compiler (v1.0, opt-in
+  build-time tool, not automatic React 19 runtime behavior) reduces
+  the need for manual memoization
 - `React.memo` only when you've measured a real performance problem
 - `useMemo` for genuinely expensive computations (filtering
   large lists, complex transforms) — not simple derivations

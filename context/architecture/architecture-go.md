@@ -4,7 +4,7 @@
 
 | Layer      | Technology                  | Role                    |
 | ---------- | --------------------------- | ----------------------- |
-| Language   | Go 1.21+                   | Backend / systems       |
+| Language   | Go 1.23+                   | Backend / systems       |
 | Router     | [net/http / chi / gin]      | HTTP routing            |
 | Database   | [PostgreSQL / MySQL / SQLite] | Persistent storage    |
 | DB Driver  | [database/sql / sqlx / pgx] | Database access        |

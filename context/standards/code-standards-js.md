@@ -29,18 +29,9 @@ Target ES2025+. Use current features:
     .take(10)
     .toArray();
   ```
-- **`Promise.withResolvers()`** — cleaner deferred promise pattern:
-  ```js
-  const { promise, resolve, reject } = Promise.withResolvers();
-  ```
 - **`Promise.try()`** — wraps sync or async function into a promise:
   ```js
   const result = await Promise.try(() => maybeSync());
-  ```
-- **`Object.groupBy()` / `Map.groupBy()`** — native grouping:
-  ```js
-  const byStatus = Object.groupBy(orders, o => o.status);
-  // { pending: [...], shipped: [...] }
   ```
 - **Import attributes** — type-safe module imports:
   ```js
@@ -48,9 +39,18 @@ Target ES2025+. Use current features:
   import styles from './app.css' with { type: 'css' };
   ```
 
-### ES2023–2024
+### ES2022–2024
 
-- **Non-mutating array methods** — return new arrays:
+- **`Promise.withResolvers()`** (ES2024) — cleaner deferred promise pattern:
+  ```js
+  const { promise, resolve, reject } = Promise.withResolvers();
+  ```
+- **`Object.groupBy()` / `Map.groupBy()`** (ES2024) — native grouping:
+  ```js
+  const byStatus = Object.groupBy(orders, o => o.status);
+  // { pending: [...], shipped: [...] }
+  ```
+- **Non-mutating array methods** (ES2023) — return new arrays:
   ```js
   arr.toSorted((a, b) => a - b)  // sorted copy
   arr.toReversed()                // reversed copy
@@ -63,9 +63,9 @@ Target ES2025+. Use current features:
   ```js
   const copy = structuredClone(original);
   ```
-- **`Object.hasOwn(obj, prop)`** — replaces
+- **`Object.hasOwn(obj, prop)`** (ES2022) — replaces
   `Object.prototype.hasOwnProperty.call()`
-- **`Array.prototype.at()`** — negative indexing:
+- **`Array.prototype.at()`** (ES2022) — negative indexing:
   `arr.at(-1)` for last element
 
 ## Modules
@@ -263,7 +263,7 @@ const byCategory = products.reduce((acc, p) => {
 - `"type": "module"` in `package.json`
 - `node:` prefix for built-in modules: `import fs from 'node:fs/promises'`
 - `node:test` for simple test suites
-- `--env-file .env` flag (Node 22+) over dotenv
-- Built-in `fetch` (Node 22+, no node-fetch)
+- `--env-file .env` flag (Node 20.6+) over dotenv
+- Built-in `fetch` (stable since Node 21, no node-fetch)
 - `import.meta.dirname` / `import.meta.filename` over
   `__dirname` / `__filename`

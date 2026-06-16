@@ -5,7 +5,7 @@ console app, or other in `architecture.md`.
 
 ## Version
 
-Target .NET 9 / C# 13 (or current LTS .NET 8 / C# 12).
+Target .NET 10 / C# 14 (current LTS, Nov 2025), or .NET 9 / C# 13.
 Use current features:
 
 - **Primary constructors** (C# 12) — for classes and structs,
@@ -44,8 +44,8 @@ Use current features:
   private readonly Lock _lock = new();
   void Update() { lock (_lock) { ... } }
   ```
-- **`field` keyword in properties** (C# 13 preview) — access
-  backing field directly in property accessors
+- **`field` keyword in properties** (preview in C# 13, stabilized in
+  C# 14) — access the backing field directly in property accessors
 - **`record`** — for immutable DTOs and value objects
 - **`sealed`** — on classes not designed for inheritance
 - **File-scoped namespaces** — `namespace X;` instead of wrapping braces

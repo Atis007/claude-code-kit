@@ -5,7 +5,8 @@ Spring Boot, Quarkus, or plain Java in `architecture.md`.
 
 ## Version
 
-Target Java 21+ (LTS). Use current features:
+Target Java 21+ (LTS). The current LTS is Java 25 (Sept 2025);
+21 remains a supported LTS baseline. Use current features:
 
 - **Virtual threads** (21) — lightweight threads for concurrent
   I/O. Use `Executors.newVirtualThreadPerTaskExecutor()` for
@@ -42,10 +43,12 @@ Target Java 21+ (LTS). Use current features:
   public record UserDto(String name, String email, Role role) {}
   ```
 - **Text blocks** (15) — multi-line strings with `"""`
-- **`var`** (11) — local variable type inference for obvious types
+- **`var`** (10) — local variable type inference for obvious types
 - **Sequenced collections** (21) — `getFirst()`, `getLast()`,
   `reversed()` on List, Set, Map
-- **String templates** (preview in 21) — use if enabled
+
+Note: string templates (previewed in 21–22) were **withdrawn** and are
+not in the language as of JDK 23+ — do not rely on them.
 
 ## General
 
